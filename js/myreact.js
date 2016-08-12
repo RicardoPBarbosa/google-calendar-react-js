@@ -94,7 +94,7 @@ var Calendar = React.createClass({
 		var entryDate = {year,month,day};
 		var entry = {entryName,entryDate,entryTime};
 		if(entry != ''){
-			this.state.entries.push(entry);
+			this.state.entries.splice(0,0,entry);
 			// clean and close entry page
 			$(".float").removeClass('rotate');
 			$("#add_entry").addClass('animated slideOutDown');
@@ -106,6 +106,10 @@ var Calendar = React.createClass({
 			return this.setState({entries: this.state.entries});
 		}
 		
+	},
+	deleteEntry: function(e){
+		this.state.entries.splice(e,1);
+		return this.setState({entries: this.state.entries});
 	},
 	render: function(){
 		var calendar = [];
@@ -172,7 +176,7 @@ var Calendar = React.createClass({
 							</div>
 							{this.state.entries != '' ?
 								<div>
-									{this.state.entries.reverse().map(function(entry, e){
+									{this.state.entries.map(function(entry, e){
 										count++;
 										var entryFromThisDate = (entry.entryDate.day === this.state.currDay && entry.entryDate.month === this.state.currMonth && entry.entryDate.year === this.state.currYear ? true : false);
 										if(entryFromThisDate){
@@ -181,8 +185,13 @@ var Calendar = React.createClass({
 											return (
 												<div id="entry" key={e}>
 													<div>
-														<p className="entry_event">{entry.entryName}</p>
-														<p className="entry_time">{entry.entryTime.getDate()} {MonthNames[entry.entryTime.getMonth()]} {entry.entryTime.getFullYear()} {addZero(entry.entryTime.getHours())}:{addZero(entry.entryTime.getMinutes())}</p>
+														<div className="entry_info">
+															<p className="entry_event">{entry.entryName}</p>
+															<p className="entry_time">{entry.entryTime.getDate()} {MonthNames[entry.entryTime.getMonth()]} {entry.entryTime.getFullYear()} {addZero(entry.entryTime.getHours())}:{addZero(entry.entryTime.getMinutes())}</p>
+														</div>
+														<div className="delete_entry">
+															<i className="fa fa-times" aria-hidden="true" onClick={this.deleteEntry.bind(null,e)}></i>
+														</div>
 													</div>
 												</div>
 											)
