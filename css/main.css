@@ -53,8 +53,12 @@ ul{list-style:none;}
 #entry{width:100%;border-bottom:1px solid #E0E0E0;height:40px;padding-bottom:20px;margin-bottom:20px;}
 #entry p{margin:0;}
 #entry > div{border-left:4px solid #2980b9;height:40px;padding-left:20px;}
+.entry_info{float:left;width:80%;}
 .entry_event{line-height:20px;font-weight:500;color:#555;}
 .entry_time{line-height:20px;font-weight:300;color:#888;font-size:15px;}
+.delete_entry{float:left;width:20%;line-height:40px;text-align:center;font-size:25px;color:#888;}
+.delete_entry i{width:30px;height:30px;line-height:30px;cursor:pointer;border-radius:50%;padding:5px;}
+.delete_entry i:active{background:rgba(189, 195, 199, 0.2)}
 
 #ignoreOverflow{position:absolute;bottom:-25px;right:0;}
 /* material button */
