@@ -144,7 +144,7 @@ var Calendar = React.createClass({
 											var existEntry = {};
 											{this.state.entries.map(function(entry, e){
 												if(entry.entryDate.day == day && entry.entryDate.month == this.state.dates.nameofmonth && entry.entryDate.year == this.state.dates.year){
-													existEntry = {borderBottomWidth:"3px", borderBottomStyle:"solid", borderBottomColor:"#fff"};
+													existEntry = {borderWidth:"2px", borderStyle:"solid", borderColor:"#8DBEDE"};
 													return;
 												}
 											}.bind(this))}
