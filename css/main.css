@@ -35,31 +35,83 @@ ul{list-style:none;}
 .currday{font-size:15px;font-weight:300;color:#777;}
 
 /* add entry form */
-#add_entry{position:relative;z-index:50;background:#ffffff;height:500px;width:400px;top:40px;display:none;}
+#add_entry{position:relative;z-index:50;background:#ffffff;height:400px;width:400px;top:40px;display:none;}
 .enter_entry{width:100%;height:50px;background:#2980b9;}
-.enter_entry > input{outline:none !important;border:none;max-width:65%;height:30px;font-size:25px;background:transparent;padding:0px 30px;color:#fff;}
-::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color: #ECECEC;
-}
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color: #ECECEC;
-   opacity: 1;
-}
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color: #ECECEC;
-   opacity: 1;
-}
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-   color: #ECECEC;
-}
+.enter_entry > input{outline:none !important;border:none;max-width:65%;height:30px;font-size:20px;background:transparent;padding:0px 30px;color:#fff;}
 .enter_entry > span{width:40%;padding:20px 13px;color:white;cursor:pointer;border-radius:50%;}
+
+.enter_entry > input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #fff;
+}
+.enter_entry > input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color: #fff;
+   opacity: 1;
+}
+.enter_entry > input::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color: #fff;
+   opacity: 1;
+}
+.enter_entry > input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color: #fff;
+}
+.entry_details{width:100%;height:100%;background:#fff;}
+.entry_details > div{padding:0px 30px;}
+.entry_info{width:100%;border-bottom:1px solid #E0E0E0;min-height:40px;padding:20px 0px;}
+.entry_info2{width:100%;border-bottom:1px solid #E0E0E0;height:40px;padding-bottom:20px;}
+.entry_info i, .entry_info2 i{font-size:25px;color:#B6B6B6;line-height:60px;vertical-align:middle;margin-right:20px;}
+.entry_info p, .entry_info2 p{line-height:60px;margin:0;padding:0;display:inline-block;width:50%;}
+.entry_info2 input{border:none;font-size:16px;width:85%;}
+.entry_info2 textarea{border:none;font-size:16px;width:85%;resize:none;margin-top:20px;font-family: 'Roboto', sans-serif;height:35px;}
+.entry_info2 input:focus{outline:none;border:none;}
+.entry_info2 textarea:focus{outline:none;border:none;}
+#select_hour{margin-left:40px;line-height:30px;width:auto;}
+#hour{float:right;line-height:35px;text-align:right;}
+#enter_hour{padding:0;margin:0;width:20%;padding:5px;}
+.fa-pencil{font-size:18px !important;margin-top:-40px;}
+.fa-circle{font-size:18px !important;line-height:20px !important;}
+#defColor{width:89%;}
+.colors{padding-top:0px;}
+.colors > div{margin-left:35px;}
+.colors > div span i{cursor:pointer;}
+.colors > div span i:active{color:#000;}
+#blue{color:#2980b9;}
+#red{color:#DB1B1B;}
+#green{color:#8BB929;}
+#yellow{color:#E4F111;}
+#purple{color:#8129B9;}
+#gray{color:#666666;}
+
+
+/* toggle */
+input[type='checkbox'] {display: none; cursor: pointer; }
+input[type='checkbox']:focus,
+input[type='checkbox']:active {outline: none; }
+input[type='checkbox'] + label {cursor: pointer; display: inline-block; position: relative; padding-left: 25px; margin-right: 10px; color: #0b4c6a; }
+input[type='checkbox'] + label:before,
+input[type='checkbox'] + label:after {content: ''; font-family: helvetica; display: inline-block; width: 18px; height: 18px; left: 0; bottom: 0; text-align: center; position: absolute; }
+input[type='checkbox'] + label:before {background-color: #fafafa; -moz-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+input[type='checkbox'] + label:after {color: #fff; }
+input[type='checkbox']:checked + label:before {-moz-box-shadow: inset 0 0 0 10px #158EC6; -webkit-box-shadow: inset 0 0 0 10px #158EC6; box-shadow: inset 0 0 0 10px #158EC6; }
+input[type='checkbox'] + label:before {-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }
+input[type='checkbox'] + label:hover:after, input[type='checkbox']:checked + label:after {content: "\2713"; line-height: 18px; font-size: 14px; }
+input[type='checkbox'] + label:hover:after {color: #c7c7c7; }
+input[type='checkbox']:checked + label:after, input[type='checkbox']:checked + label:hover:after {color: #fff; }
+
+/*Toggle Specific styles*/
+input[type='checkbox'].toggle {display: inline-block; -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 55px; height: 28px; background-color: #C0C0C0; position: relative; -moz-border-radius: 30px; -webkit-border-radius: 30px; border-radius: 30px; -moz-transition: all 0.2s ease-in-out; -o-transition: all 0.2s ease-in-out; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out; float:right; margin-top:18px; }
+input[type='checkbox'].toggle:hover:after {background-color: #ffffff; }
+input[type='checkbox'].toggle:after {content: ''; display: inline-block; position: absolute; width: 24px; height: 24px; background-color: #F2F2F2; top: 2px; left: 2px; -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%; -moz-transition: all 0.2s ease-in-out; -o-transition: all 0.2s ease-in-out; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out; }
+input[type='checkbox']:checked.toggle {-moz-box-shadow: inset 0 0 0 15px #2980b9; -webkit-box-shadow: inset 0 0 0 15px #2980b9; box-shadow: inset 0 0 0 15px #2980b9; }
+input[type='checkbox']:checked.toggle:after {left: 29px; background-color: #fff; }
+
+/* entry list */
 .no-entries{width:100%;text-align:center;}
 .no-entries i{font-size:35px;color:#888;width:100%;padding-bottom:20px;}
 .no-entries span{font-size:25px;color:#888;width:100%;font-weight:300;font-style:italic;}
 #entry{width:100%;border-bottom:1px solid #E0E0E0;height:40px;padding-bottom:20px;margin-bottom:20px;}
 #entry p{margin:0;}
 #entry > div{border-left:4px solid #2980b9;height:40px;padding-left:20px;}
-.entry_info{float:left;width:80%;}
+.entry_left{float:left;width:80%;}
 .entry_event{line-height:20px;font-weight:500;color:#555;height:20px;}
 .entry_time{line-height:20px;font-weight:300;color:#888;font-size:15px;}
 .delete_entry{float:left;width:20%;line-height:40px;text-align:center;font-size:25px;color:#888;}
