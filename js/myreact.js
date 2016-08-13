@@ -65,6 +65,24 @@ var Calendar = React.createClass({
 		var currentYear = this.state.dates.date.getFullYear();
 		return this.setState({today:selected_day, entry:'+', currDay:day, currMonth:currentMonth, currYear:currentYear, currMonthN:currentMonthN});
 	},
+	returnPresent: function(){
+		if($(".float").hasClass('rotate')){
+			$(".float").removeClass('rotate');
+			$("#add_entry").addClass('animated slideOutDown');
+			window.setTimeout( function(){
+                $("#add_entry").css('display','none');
+            }, 400);
+			$("#entry_name").val("");
+		}
+		var month = {};
+		var today = new Date();
+		month = new Month(today.getFullYear(), today.getMonth() + 1, month);
+		this.state.currDay = "";
+		this.state.currMonth = "";
+		this.state.currYear = "";
+		$(".float").removeClass('rotate');
+		return this.setState({dates:month, today:today});
+	},
 	addEntry: function(day){
 		if(this.state.currDay){
 			if($(".float").hasClass('rotate')){
@@ -90,22 +108,23 @@ var Calendar = React.createClass({
 	},
 	saveEntry: function(year, month, day){
 		var entryName = $("#entry_name").val();
-		var entryTime = new Date();
-		var entryDate = {year,month,day};
-		var entry = {entryName,entryDate,entryTime};
-		if(entry != ''){
-			this.state.entries.splice(0,0,entry);
-			// clean and close entry page
-			$(".float").removeClass('rotate');
-			$("#add_entry").addClass('animated slideOutDown');
-			window.setTimeout( function(){
-	            $("#add_entry").css('display','none');
-	        }, 400);
-			$("#entry_name").val("");
+		if($.trim(entryName).length > 0){
+			var entryTime = new Date();
+			var entryDate = {year,month,day};
+			var entry = {entryName,entryDate,entryTime};
+			if(entry != ''){
+				this.state.entries.splice(0,0,entry);
+				// clean and close entry page
+				$(".float").removeClass('rotate');
+				$("#add_entry").addClass('animated slideOutDown');
+				window.setTimeout( function(){
+		            $("#add_entry").css('display','none');
+		        }, 400);
+				$("#entry_name").val("");
 
-			return this.setState({entries: this.state.entries});
+				return this.setState({entries: this.state.entries});
+			}
 		}
-		
 	},
 	deleteEntry: function(e){
 		this.state.entries.splice(e,1);
@@ -125,7 +144,7 @@ var Calendar = React.createClass({
 					<div id="header">
 						<i className="fa fa-bars" aria-hidden="true"></i>
 						<p>{this.state.dates.nameofmonth} {this.state.dates.year}</p>
-						<i className="fa fa-calendar" aria-hidden="true"></i>
+						<div><i onClick={this.returnPresent} className="fa fa-calendar-o" aria-hidden="true"><span>{this.state.present.getDate()}</span></i></div>
 						<i className="fa fa-search" aria-hidden="true"></i>
 					</div>
 					<div id="add_entry">
