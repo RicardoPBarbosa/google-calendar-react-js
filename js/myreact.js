@@ -40,8 +40,9 @@ var Calendar = React.createClass({
 		var present = new Date();
 		var month = {};
 		var entries = [];
+		var defaultColor = {color:"#2980b9"};
 		month = new Month(today.getFullYear(), today.getMonth() + 1, month);
-		return {dates:month, today:today, entry:'+', present:present, entries:entries};
+		return {dates:month, today:today, entry:'+', present:present, entries:entries, color:defaultColor};
 	},
 	update: function(direction){
 		var month = {};
@@ -63,7 +64,7 @@ var Calendar = React.createClass({
 		var currentMonth = this.state.dates.nameofmonth;
 		var currentMonthN = this.state.dates.numberofmonth;
 		var currentYear = this.state.dates.date.getFullYear();
-		return this.setState({today:selected_day, entry:'+', currDay:day, currMonth:currentMonth, currYear:currentYear, currMonthN:currentMonthN});
+		return this.setState({today:selected_day, currDay:day, currMonth:currentMonth, currYear:currentYear, currMonthN:currentMonthN});
 	},
 	returnPresent: function(){
 		if($(".float").hasClass('rotate')){
@@ -130,6 +131,11 @@ var Calendar = React.createClass({
 		this.state.entries.splice(e,1);
 		return this.setState({entries: this.state.entries});
 	},
+	setColor: function(color, id){
+		$("#" + id).css('color', this.state.color.color);
+		var dColor = this.state.color = {color:color};
+		return this.setState({color:dColor});
+	},
 	render: function(){
 		var calendar = [];
 		for(var property in this.state.dates.calendar){
@@ -149,8 +155,40 @@ var Calendar = React.createClass({
 					</div>
 					<div id="add_entry">
 						<div className="enter_entry">
-							<input type="text" placeholder="Entry name" id="entry_name" />
+							<input type="text" placeholder="Enter title" id="entry_name" />
 							<span id="save_entry" onClick={this.saveEntry.bind(null, this.state.currYear, this.state.currMonth, this.state.currDay)}>SAVE</span>
+						</div>
+						<div className="entry_details">
+							<div>
+								<div className="entry_info">
+									<i className="fa fa-clock-o" aria-hidden="true"></i>
+									<input className='toggle' type="checkbox" name='all-day' id="all-day" />
+									<p>All-day</p>
+									<div id="not-all-day">
+										<p id="select_hour">Select hour</p>
+										<p id="hour"><input type="number" id="enter_hour" min="0" max="24" /> h</p>
+									</div>
+								</div>
+								<div className="entry_info2">
+									<i className="fa fa-map-marker" aria-hidden="true"></i>
+									<input type="text" placeholder="Add location" />
+								</div>
+								<div className="entry_info2">
+									<i className="fa fa-pencil" aria-hidden="true"></i>
+									<textarea name="" id="" cols="35" rows="2" placeholder="Add note"></textarea>
+								</div>
+								<div className="entry_info colors">
+									<i className="fa fa-circle" aria-hidden="true" id="blue" style={this.state.color} ></i>
+									<p id="defColor">Default color</p>
+									<div>
+										<span><i onClick={this.setColor.bind(null, "#DB1B1B", "red")} className="fa fa-circle" aria-hidden="true" id="red" ></i></span>
+										<span><i onClick={this.setColor.bind(null, "#8BB929", "green")} className="fa fa-circle" aria-hidden="true" id="green" ></i></span>
+										<span><i onClick={this.setColor.bind(null, "#E4F111", "yellow")} className="fa fa-circle" aria-hidden="true" id="yellow" ></i></span>
+										<span><i onClick={this.setColor.bind(null, "#8129B9", "purple")} className="fa fa-circle" aria-hidden="true" id="purple" ></i></span>
+										<span><i onClick={this.setColor.bind(null, "#666666", "gray")} className="fa fa-circle" aria-hidden="true" id="gray" ></i></span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div id="arrows">
@@ -204,7 +242,7 @@ var Calendar = React.createClass({
 											return (
 												<div id="entry" key={e}>
 													<div>
-														<div className="entry_info">
+														<div className="entry_left">
 															<p className="entry_event">{entry.entryName}</p>
 															<p className="entry_time">{entry.entryTime.getDate()} {MonthNames[entry.entryTime.getMonth()]} {entry.entryTime.getFullYear()} {addZero(entry.entryTime.getHours())}:{addZero(entry.entryTime.getMinutes())}</p>
 														</div>
@@ -245,6 +283,14 @@ ReactDOM.render(<Calendar />, document.getElementById("app"));
 // jQuery functions
 
 (function($, undefined) {
+	$("#all-day").click(function(){
+		if(this.checked){
+			$("#not-all-day").css('display', 'none');
+		}else{
+			$("#not-all-day").css('display', 'block');
+		}
+	});
+
   function hypot(x, y) { return Math.sqrt((x * x) + (y * y)); }
 
   $("button").each(function(el) {
