@@ -2,13 +2,13 @@ var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 var MonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 function Month(year, month, dates){
-	this.date = new Date(year,month,0);
-	this.numberofdays = this.date.getDate();
+	this.date          = new Date(year,month,0);
+	this.numberofdays  = this.date.getDate();
 	this.numberofmonth = this.date.getMonth();
-	this.nameofmonth = MonthNames[this.date.getMonth()];
-	this.firstday = 1;
-	this.year = this.date.getFullYear();
-	this.calendar = generateCalendar(this.numberofdays, year, month-1, this.firstday, dates);
+	this.nameofmonth   = MonthNames[this.date.getMonth()];
+	this.firstday      = 1;
+	this.year          = this.date.getFullYear();
+	this.calendar      = generateCalendar(this.numberofdays, year, month-1, this.firstday, dates);
 }
 
 function Date2Day(year, month, day){
@@ -33,16 +33,32 @@ function addZero(i) {
     return i;
 }
 
+function resetColors(){
+	var defaultColor = {color:"#2980b9"};
+	var color1       = {color:"#DB1B1B"};
+	var color2       = {color:"#8BB929"};
+	var color3       = {color:"#E4F111"};
+	var color4       = {color:"#8129B9"};
+	var color5       = {color:"#666666"};
+	return {dColor:defaultColor, color1:color1, color2:color2, color3:color3, color4:color4, color5:color5};
+}
+
 var Calendar = React.createClass({
 	getInitialState: function(){return this.generateCalendar()},
 	generateCalendar: function(){
-		var today = new Date();
-		var present = new Date();
-		var month = {};
-		var entries = [];
+		var today        = new Date();
+		var present      = new Date();
+		var month        = {};
+		var entries      = [];
 		var defaultColor = {color:"#2980b9"};
+		var color1       = {color:"#DB1B1B"};
+		var color2       = {color:"#8BB929"};
+		var color3       = {color:"#E4F111"};
+		var color4       = {color:"#8129B9"};
+		var color5       = {color:"#666666"};
+		var file 		 = {};
 		month = new Month(today.getFullYear(), today.getMonth() + 1, month);
-		return {dates:month, today:today, entry:'+', present:present, entries:entries, color:defaultColor};
+		return {dates:month, today:today, entry:'+', present:present, entries:entries, dColor:defaultColor, color1:color1, color2:color2, color3:color3, color4:color4, color5:color5, file:file};
 	},
 	update: function(direction){
 		var month = {};
@@ -59,11 +75,11 @@ var Calendar = React.createClass({
 	},
 	selectedDay: function(day){
 		this.state.warning = "";
-		var selected_day = new Date();
+		var selected_day   = new Date();
 		selected_day.setDate(day);
-		var currentMonth = this.state.dates.nameofmonth;
-		var currentMonthN = this.state.dates.numberofmonth;
-		var currentYear = this.state.dates.date.getFullYear();
+		var currentMonth   = this.state.dates.nameofmonth;
+		var currentMonthN  = this.state.dates.numberofmonth;
+		var currentYear    = this.state.dates.date.getFullYear();
 		return this.setState({today:selected_day, currDay:day, currMonth:currentMonth, currYear:currentYear, currMonthN:currentMonthN});
 	},
 	returnPresent: function(){
@@ -75,12 +91,12 @@ var Calendar = React.createClass({
             }, 400);
 			$("#entry_name").val("");
 		}
-		var month = {};
-		var today = new Date();
-		month = new Month(today.getFullYear(), today.getMonth() + 1, month);
-		this.state.currDay = "";
+		var month            = {};
+		var today            = new Date();
+		month                = new Month(today.getFullYear(), today.getMonth() + 1, month);
+		this.state.currDay   = "";
 		this.state.currMonth = "";
-		this.state.currYear = "";
+		this.state.currYear  = "";
 		$(".float").removeClass('rotate');
 		return this.setState({dates:month, today:today});
 	},
@@ -93,6 +109,14 @@ var Calendar = React.createClass({
 	                $("#add_entry").css('display','none');
 	            }, 400);
 				$("#entry_name").val("");
+				$("#all-day").prop('checked', false); // unchecks checkbox
+				$("#not-all-day").css('display', 'block');
+				$("#enter_hour").val("");
+				$("#entry_location").val("");
+				$("#entry_note").val("");
+				// reset entry colors
+				var resColor = new resetColors();
+				return this.setState(resColor);
 			}else{
 				$(".float").addClass('rotate');
 				$("#add_entry").removeClass('animated slideOutDown');
@@ -112,29 +136,96 @@ var Calendar = React.createClass({
 		if($.trim(entryName).length > 0){
 			var entryTime = new Date();
 			var entryDate = {year,month,day};
-			var entry = {entryName,entryDate,entryTime};
-			if(entry != ''){
-				this.state.entries.splice(0,0,entry);
-				// clean and close entry page
-				$(".float").removeClass('rotate');
-				$("#add_entry").addClass('animated slideOutDown');
-				window.setTimeout( function(){
-		            $("#add_entry").css('display','none');
-		        }, 400);
-				$("#entry_name").val("");
-
-				return this.setState({entries: this.state.entries});
+			$(".duration").css('background', 'none');
+			if($("#all-day").is(':checked')){
+				var entryDuration = "All day";
+			}else if($("#enter_hour").val() && $("#enter_hour").val() >= 0 && $("#enter_hour").val() <= 24){
+				var entryDuration = addZero($("#enter_hour").val()) + " h";
+			}else{
+				$(".duration").css('background', '#F7E8E8');
+				return 0;
 			}
+			if($("#entry_location").val()){
+				var entryLocation = $("#entry_location").val();
+			}else{var entryLocation = ""}
+			if($("#entry_note").val()){
+				var entryNote = $("#entry_note").val();
+			}else{var entryNote = ""}
+
+			var entryImg = this.state.file;
+			var entryColor = this.state.dColor;
+			var entry = {entryName,entryDate,entryTime,entryDuration,entryLocation,entryNote,entryColor, entryImg};
+			this.state.entries.splice(0,0,entry);
+
+			// clean and close entry page
+			$(".float").removeClass('rotate');
+			$("#add_entry").addClass('animated slideOutDown');
+			window.setTimeout( function(){
+	            $("#add_entry").css('display','none');
+	        }, 400);
+			$("#entry_name").val("");
+			$("#all-day").prop('checked', false); // unchecks checkbox
+			$("#not-all-day").css('display', 'block');
+			$("#enter_hour").val("");
+			$("#entry_location").val("");
+			$("#entry_note").val("");
+			// reset entry colors
+			var resColor = new resetColors();
+
+			return (this.setState({entries: this.state.entries}), this.setState(resColor));
 		}
 	},
 	deleteEntry: function(e){
 		this.state.entries.splice(e,1);
 		return this.setState({entries: this.state.entries});
 	},
-	setColor: function(color, id){
-		$("#" + id).css('color', this.state.color.color);
-		var dColor = this.state.color = {color:color};
-		return this.setState({color:dColor});
+	editEntry: function(entry){
+		// next step
+	},
+	setColor: function(color, state){
+		switch(state){
+			case 'color1':
+				var changeColor = {color:this.state.dColor.color};
+				var defColor = {color:color.color};
+				return this.setState({dColor:defColor, color1:changeColor});
+			break;
+			case 'color2':
+				var changeColor = {color:this.state.dColor.color};
+				var defColor = {color:color.color};
+				return this.setState({dColor:defColor, color2:changeColor});
+			break;
+			case 'color3':
+				var changeColor = {color:this.state.dColor.color};
+				var defColor = {color:color.color};
+				return this.setState({dColor:defColor, color3:changeColor});
+			break;
+			case 'color4':
+				var changeColor = {color:this.state.dColor.color};
+				var defColor = {color:color.color};
+				return this.setState({dColor:defColor, color4:changeColor});
+			break;
+			case 'color5':
+				var changeColor = {color:this.state.dColor.color};
+				var defColor = {color:color.color};
+				return this.setState({dColor:defColor, color5:changeColor});
+			break;
+		}
+	},
+	handleImage: function(e){
+		e.preventDefault();
+	    let reader = new FileReader();
+	    let file = e.target.files[0];
+		if(file){
+		    reader.onloadend = () => {
+		    	var readerResult = reader.result;
+		    	var img = {file,readerResult};
+		      this.setState({file:img});
+		  	}
+		  	reader.readAsDataURL(file);
+		}else{
+			var img = {};
+			this.setState({file:img});
+		}
 	},
 	render: function(){
 		var calendar = [];
@@ -160,7 +251,13 @@ var Calendar = React.createClass({
 						</div>
 						<div className="entry_details">
 							<div>
-								<div className="entry_info">
+								<div className="entry_info first">
+									<i className="fa fa-image" aria-hidden="true"></i>
+									<input type="file" name='entry-img' id="entry-img" onChange={(e)=>this.handleImage(e)} />
+									<label htmlFor="entry-img" id="for_img"><span id="file_name">Choose an image</span></label>
+									<span id="remove_img">Remove</span>
+								</div>
+								<div className="entry_info2 first second duration">
 									<i className="fa fa-clock-o" aria-hidden="true"></i>
 									<input className='toggle' type="checkbox" name='all-day' id="all-day" />
 									<p>All-day</p>
@@ -171,21 +268,21 @@ var Calendar = React.createClass({
 								</div>
 								<div className="entry_info2">
 									<i className="fa fa-map-marker" aria-hidden="true"></i>
-									<input type="text" placeholder="Add location" />
+									<input type="text" placeholder="Add location" id="entry_location" />
 								</div>
 								<div className="entry_info2">
 									<i className="fa fa-pencil" aria-hidden="true"></i>
-									<textarea name="" id="" cols="35" rows="2" placeholder="Add note"></textarea>
+									<textarea id="entry_note" cols="35" rows="2" placeholder="Add note"></textarea>
 								</div>
 								<div className="entry_info colors">
-									<i className="fa fa-circle" aria-hidden="true" id="blue" style={this.state.color} ></i>
+									<i className="fa fa-circle" aria-hidden="true" id="blue" style={this.state.dColor} ></i>
 									<p id="defColor">Default color</p>
 									<div>
-										<span><i onClick={this.setColor.bind(null, "#DB1B1B", "red")} className="fa fa-circle" aria-hidden="true" id="red" ></i></span>
-										<span><i onClick={this.setColor.bind(null, "#8BB929", "green")} className="fa fa-circle" aria-hidden="true" id="green" ></i></span>
-										<span><i onClick={this.setColor.bind(null, "#E4F111", "yellow")} className="fa fa-circle" aria-hidden="true" id="yellow" ></i></span>
-										<span><i onClick={this.setColor.bind(null, "#8129B9", "purple")} className="fa fa-circle" aria-hidden="true" id="purple" ></i></span>
-										<span><i onClick={this.setColor.bind(null, "#666666", "gray")} className="fa fa-circle" aria-hidden="true" id="gray" ></i></span>
+										<span><i onClick={this.setColor.bind(null, this.state.color1, "color1")} className="fa fa-circle" aria-hidden="true" style={this.state.color1}></i></span>
+										<span><i onClick={this.setColor.bind(null, this.state.color2, "color2")} className="fa fa-circle" aria-hidden="true" style={this.state.color2}></i></span>
+										<span><i onClick={this.setColor.bind(null, this.state.color3, "color3")} className="fa fa-circle" aria-hidden="true" style={this.state.color3}></i></span>
+										<span><i onClick={this.setColor.bind(null, this.state.color4, "color4")} className="fa fa-circle" aria-hidden="true" style={this.state.color4}></i></span>
+										<span><i onClick={this.setColor.bind(null, this.state.color5, "color5")} className="fa fa-circle" aria-hidden="true" style={this.state.color5}></i></span>
 									</div>
 								</div>
 							</div>
@@ -239,12 +336,13 @@ var Calendar = React.createClass({
 										if(entryFromThisDate){
 											// prevent the "no-entries" div to appear in the next entries that are not from this day
 											done = true;
+											var style = {borderLeftColor:entry.entryColor.color, borderLeftWidth:"4px", borderLeftStyle:"solid"};
 											return (
-												<div id="entry" key={e}>
-													<div>
+												<div id="entry" key={e} onClick={this.editEntry.bind(null, entry)}>
+													<div style={style}>
 														<div className="entry_left">
 															<p className="entry_event">{entry.entryName}</p>
-															<p className="entry_time">{entry.entryTime.getDate()} {MonthNames[entry.entryTime.getMonth()]} {entry.entryTime.getFullYear()} {addZero(entry.entryTime.getHours())}:{addZero(entry.entryTime.getMinutes())}</p>
+															<p className="entry_time">{entry.entryDuration} | {entry.entryLocation}</p>
 														</div>
 														<div className="delete_entry">
 															<i className="fa fa-times" aria-hidden="true" onClick={this.deleteEntry.bind(null,e)}></i>
@@ -280,14 +378,27 @@ var Calendar = React.createClass({
 })
 ReactDOM.render(<Calendar />, document.getElementById("app"));
 
-// jQuery functions
-
 (function($, undefined) {
 	$("#all-day").click(function(){
 		if(this.checked){
 			$("#not-all-day").css('display', 'none');
 		}else{
 			$("#not-all-day").css('display', 'block');
+		}
+	});
+	
+	$("#entry-img").bind( 'change', function( e ){
+		var label	 = this.nextElementSibling;
+		var fileName = '';
+		if(this.files){
+			fileName = e.target.value.split( '\\' ).pop();
+		}else{
+			fileName = '';
+		}
+		if( fileName != '' ){
+			label.querySelector( 'span' ).innerHTML = fileName;
+		}else{
+			label.querySelector( 'span' ).innerHTML = "Choose an image";
 		}
 	});
 
