@@ -1,4 +1,5 @@
 body{background:#E9E9E9;margin:0;padding:0;width:100%;height:100%;font-family: 'Roboto', sans-serif;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;}
+a{color:white;text-decoration:none;}
 #app{width:400px;margin:auto;margin-top:60px;position:relative;}
 #calendar{overflow:hidden;background:#2980b9;height:500px;width:100%;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25), 0px 0px 2px rgba(0, 0, 0, 0.125);}
 #header{width:100%;height:30px;color:white;margin-top:5px;text-align:center;z-index:200;}
@@ -142,6 +143,19 @@ input[type='checkbox']:checked.toggle:after {left: 29px; background-color: #fff;
 .delete_entry{float:left;width:20%;line-height:40px;text-align:center;font-size:25px;color:#888;}
 .delete_entry i{width:30px;height:30px;line-height:30px;cursor:pointer;border-radius:50%;padding:5px;}
 .delete_entry i:active{background:rgba(189, 195, 199, 0.2)}
+
+/* Menu */
+.fa-bars{cursor:pointer;}
+#menu{width:100%;height:100%;position:absolute;background:rgba(0,0,0,0.4);z-index:100;overflow:hidden;display:none;}
+#menu-content{width:65%;background:white;float:left;height:100%;display:none;}
+#click-close{float:right;width:35%;height:100%;cursor:pointer;}
+.madeBy{width:100%;height:200px;position:relative;background:#2980b9;color:white;}
+.madeOverlay{width:100%;position:absolute;bottom:10px;}
+.madeOverlay span{float:left;width:100%;margin-left:15px;margin-bottom:5px;font-weight:300;}
+#madeName{font-weight:400;font-size:20px;}
+#madeInfo{font-size:14px;}
+#madeWeb{font-size:14px;display:inline-block;width:auto;}
+#madeWeb:hover{text-decoration:underline;}
 
 #ignoreOverflow{position:absolute;bottom:-25px;right:0;}
 /* material button */
