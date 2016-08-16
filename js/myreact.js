@@ -1,3 +1,9 @@
+/*
+	Problems i know that exist but i don't want to waste time with them (since it's just a playground):
+	- When an entry title is big and needs a second line it overflows other stuff
+	- the images takes a bit to load so dont rush opening the entry, no need to go into compressing
+	- to remove an image from the input (while inserting an entry) just click the input and click cancel afterwards, the input keeps the file after inserting an entry, when you enter another entry the image will still be there for that new entry
+*/
 var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var MonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -41,6 +47,13 @@ function resetColors(){
 	var color4       = {color:"#8129B9"};
 	var color5       = {color:"#666666"};
 	return {dColor:defaultColor, color1:color1, color2:color2, color3:color3, color4:color4, color5:color5};
+}
+
+Date.daysBetween = function( date1, date2 ) {
+  var firstDate = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  var secondDate = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+  var diference = (secondDate - firstDate) / 86400000;
+  return Math.trunc(diference);
 }
 
 var Calendar = React.createClass({
@@ -104,9 +117,12 @@ var Calendar = React.createClass({
 		if(this.state.currDay){
 			if($(".float").hasClass('rotate')){
 				$(".float").removeClass('rotate');
+				$(".entry").css('background', 'none');
+				$("#open_entry").addClass('animated slideOutDown');
 				$("#add_entry").addClass('animated slideOutDown');
 				window.setTimeout( function(){
 	                $("#add_entry").css('display','none');
+	                $("#open_entry").css('display','none');
 	            }, 400);
 				$("#entry_name").val("");
 				$("#all-day").prop('checked', false); // unchecks checkbox
@@ -140,7 +156,7 @@ var Calendar = React.createClass({
 			if($("#all-day").is(':checked')){
 				var entryDuration = "All day";
 			}else if($("#enter_hour").val() && $("#enter_hour").val() >= 0 && $("#enter_hour").val() <= 24){
-				var entryDuration = addZero($("#enter_hour").val()) + " h";
+				var entryDuration = addZero($("#enter_hour").val());
 			}else{
 				$(".duration").css('background', '#F7E8E8');
 				return 0;
@@ -177,10 +193,42 @@ var Calendar = React.createClass({
 	},
 	deleteEntry: function(e){
 		this.state.entries.splice(e,1);
-		return this.setState({entries: this.state.entries});
+		$(".float").removeClass('rotate');
+		$("#open_entry").addClass('animated slideOutDown');
+		$("#add_entry").addClass('animated slideOutDown');
+		window.setTimeout( function(){
+            $("#add_entry").css('display','none');
+            $("#open_entry").css('display','none');
+        }, 400);
+        $(".entry").css('background', 'none');
+		$("#entry_name").val("");
+		$("#all-day").prop('checked', false); // unchecks checkbox
+		$("#not-all-day").css('display', 'block');
+		$("#enter_hour").val("");
+		$("#entry_location").val("");
+		$("#entry_note").val("");
+		var resColor = new resetColors();
+		return (this.setState({entries: this.state.entries}), this.setState(resColor));
 	},
-	editEntry: function(entry){
-		// next step
+	openEntry: function(entry, e){
+		if($(".float").hasClass('rotate')){
+			$(".float").removeClass('rotate');
+			$("#open_entry").addClass('animated slideOutDown');
+			window.setTimeout( function(){
+                $("#open_entry").css('display','none');
+            }, 400);
+            $(".entry").css('background', 'none');
+            $("#"+e).css('background', 'none');
+		}else{
+			window.setTimeout( function(){
+               $("#open_entry").removeClass('animated slideOutDown');
+				$("#open_entry").addClass('animated slideInUp');
+				$("#open_entry").css('display', 'block');
+            }, 50);
+			$(".float").addClass('rotate');
+			$("#"+e).css('background', '#F1F1F1');
+			return this.setState({openEntry: entry});
+		}
 	},
 	setColor: function(color, state){
 		switch(state){
@@ -235,6 +283,20 @@ var Calendar = React.createClass({
 		var weekdays = Object.keys(this.state.dates.calendar);
 		var done = false;
 		var count = 0;
+		var daysBetween = '';
+		if(this.state.openEntry){
+			var selectdDate = new Date(this.state.openEntry.entryDate.year, this.state.openEntry.entryDate.month, this.state.openEntry.entryDate.day);
+			if(selectdDate > this.state.present){
+				daysBetween = Date.daysBetween(this.state.present, selectdDate);
+				if(daysBetween == 1){daysBetween = "Tomorrow"}else{daysBetween = daysBetween + " days to go";}
+			}else if(selectdDate < this.state.present){
+				daysBetween = Date.daysBetween(selectdDate, this.state.present);
+				if(daysBetween == 1){daysBetween = "Yesterday"}else{daysBetween = daysBetween + " days ago";}
+			}
+			if(this.state.present.getDate() === this.state.openEntry.entryDate.day && this.state.present.getMonth() === this.state.openEntry.entryDate.month && this.state.present.getFullYear() === this.state.openEntry.entryDate.year){
+				daysBetween = "Today";
+			}
+		}
 		return(
 			<div>
 				<div id="calendar">
@@ -247,7 +309,7 @@ var Calendar = React.createClass({
 					<div id="add_entry">
 						<div className="enter_entry">
 							<input type="text" placeholder="Enter title" id="entry_name" />
-							<span id="save_entry" onClick={this.saveEntry.bind(null, this.state.currYear, this.state.currMonth, this.state.currDay)}>SAVE</span>
+							<span id="save_entry" onClick={this.saveEntry.bind(null, this.state.currYear, this.state.currMonthN, this.state.currDay)}>SAVE</span>
 						</div>
 						<div className="entry_details">
 							<div>
@@ -288,6 +350,25 @@ var Calendar = React.createClass({
 							</div>
 						</div>
 					</div>
+					{this.state.openEntry ?
+						<div id="open_entry">
+							<div className="entry_img" style={{backgroundColor:this.state.openEntry.entryColor.color}}>
+								<div className="overlay"><div>
+									<p>
+										<span id="entry_title">{this.state.openEntry.entryName}</span>
+										<span id="entry_times">{daysBetween} {this.state.openEntry.entryDuration === "All day" ? "| All day" : "at " + this.state.openEntry.entryDuration + ":00" }</span>
+									</p>
+								</div></div>
+								<img src={this.state.openEntry.entryImg.readerResult} width="400px" height="300px" />
+							</div>
+							<div className="entry openedEntry"><div>
+								<i className="fa fa-map-marker" aria-hidden="true"></i> {this.state.openEntry.entryLocation ? this.state.openEntry.entryLocation : <span>No location</span>}
+							</div></div>
+							<div className="entry openedEntry noteDiv"><div>
+								<i className="fa fa-pencil" aria-hidden="true"></i> {this.state.openEntry.entryNote ? <span id="note">{this.state.openEntry.entryNote}</span> : <span>No description</span>}
+							</div></div>
+						</div>
+					: null}
 					<div id="arrows">
 						<i className="fa fa-arrow-left" aria-hidden="true" onClick={this.update.bind(null,"left")}></i>
 						<i className="fa fa-arrow-right" aria-hidden="true" onClick={this.update.bind(null,"right")}></i>
@@ -301,7 +382,7 @@ var Calendar = React.createClass({
 										{week.map(function(day, k){
 											var existEntry = {};
 											{this.state.entries.map(function(entry, e){
-												if(entry.entryDate.day == day && entry.entryDate.month == this.state.dates.nameofmonth && entry.entryDate.year == this.state.dates.year){
+												if(entry.entryDate.day == day && entry.entryDate.month == this.state.dates.numberofmonth && entry.entryDate.year == this.state.dates.year){
 													existEntry = {borderWidth:"2px", borderStyle:"solid", borderColor:"#8DBEDE"};
 													return;
 												}
@@ -332,17 +413,17 @@ var Calendar = React.createClass({
 								<div>
 									{this.state.entries.map(function(entry, e){
 										count++;
-										var entryFromThisDate = (entry.entryDate.day === this.state.currDay && entry.entryDate.month === this.state.currMonth && entry.entryDate.year === this.state.currYear ? true : false);
+										var entryFromThisDate = (entry.entryDate.day === this.state.currDay && entry.entryDate.month === this.state.currMonthN && entry.entryDate.year === this.state.currYear ? true : false);
 										if(entryFromThisDate){
 											// prevent the "no-entries" div to appear in the next entries that are not from this day
 											done = true;
 											var style = {borderLeftColor:entry.entryColor.color, borderLeftWidth:"4px", borderLeftStyle:"solid"};
 											return (
-												<div id="entry" key={e} onClick={this.editEntry.bind(null, entry)}>
+												<div className="entry" id={e} key={e}>
 													<div style={style}>
-														<div className="entry_left">
+														<div className="entry_left" onClick={this.openEntry.bind(null, entry, e)}>
 															<p className="entry_event">{entry.entryName}</p>
-															<p className="entry_time">{entry.entryDuration} | {entry.entryLocation}</p>
+															<p className="entry_time">{entry.entryDuration === "All day" ? "All day" : entry.entryDuration + " h" } {entry.entryLocation ? " | " + entry.entryLocation : null}</p>
 														</div>
 														<div className="delete_entry">
 															<i className="fa fa-times" aria-hidden="true" onClick={this.deleteEntry.bind(null,e)}></i>
