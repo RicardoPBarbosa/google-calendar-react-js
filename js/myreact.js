@@ -221,7 +221,7 @@ var Calendar = React.createClass({
             $("#"+e).css('background', 'none');
 		}else{
 			window.setTimeout( function(){
-               $("#open_entry").removeClass('animated slideOutDown');
+               	$("#open_entry").removeClass('animated slideOutDown');
 				$("#open_entry").addClass('animated slideInUp');
 				$("#open_entry").css('display', 'block');
             }, 50);
@@ -275,6 +275,12 @@ var Calendar = React.createClass({
 			this.setState({file:img});
 		}
 	},
+	openMenu: function(){
+		$("#menu").css('display', 'block');
+		$("#menu-content").addClass('animated slideInLeft');
+		$("#menu-content").css('display', 'block');
+		
+	},
 	render: function(){
 		var calendar = [];
 		for(var property in this.state.dates.calendar){
@@ -300,8 +306,22 @@ var Calendar = React.createClass({
 		return(
 			<div>
 				<div id="calendar">
+					<div id="menu">
+						<div id="menu-content">
+							<div className="madeBy">
+								<div className="madeOverlay">
+									<span id="madeName">Ricardo Barbosa</span>
+									<span id="madeInfo">WebDeveloper - Portugal</span>
+									<span id="madeWeb"><a target="_blank" href="https://github.com/RicardoPBarbosa"><i className="fa fa-github" aria-hidden="true"></i> GitHub</a></span>
+									<span id="madeWeb"><a target="_blank" href="http://codepen.io/RicardoBarbosa/"><i className="fa fa-codepen" aria-hidden="true"></i> CodePen</a></span>
+								</div>
+								<img src="http://imgur.com/LOaisfQ.jpg" width="260" height="200" />
+							</div>
+						</div>
+						<div id="click-close"></div>
+					</div>
 					<div id="header">
-						<i className="fa fa-bars" aria-hidden="true"></i>
+						<i className="fa fa-bars" aria-hidden="true" onClick={this.openMenu}></i>
 						<p>{this.state.dates.nameofmonth} {this.state.dates.year}</p>
 						<div><i onClick={this.returnPresent} className="fa fa-calendar-o" aria-hidden="true"><span>{this.state.present.getDate()}</span></i></div>
 						<i className="fa fa-search" aria-hidden="true"></i>
@@ -466,6 +486,16 @@ ReactDOM.render(<Calendar />, document.getElementById("app"));
 		}else{
 			$("#not-all-day").css('display', 'block');
 		}
+	});
+
+	$("#click-close").click(function(){
+		$("#menu-content").removeClass('animated slideInLeft');
+		$("#menu-content").addClass('animated slideOutLeft');
+		window.setTimeout( function(){
+            $("#menu").css('display', 'none');
+			$("#menu-content").css('display', 'none');
+			$("#menu-content").removeClass('animated slideOutLeft');
+        }, 500);
 	});
 	
 	$("#entry-img").bind( 'change', function( e ){
